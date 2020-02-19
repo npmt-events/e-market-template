@@ -1,0 +1,22 @@
+@import "./variables.scss";
+
+
+.wrapper{
+  background-color: $light;
+  min-height:700px;
+}
+
+.e-market-header{
+  background-color: $primary;
+
+  .active{
+    .nav-link{
+      color: $light !important;
+      font-weight: bold;
+    }
+  }
+
+  .nav-link{
+    color : $light !important;
+  }
+}
