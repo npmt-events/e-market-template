@@ -6,6 +6,7 @@
 
 const {exec}  =require('child_process');
 const fs = require('fs');
+const webpackConfig = require('./../../webpack.config.js');
 
 /**
  * Allowed arguments
@@ -113,15 +114,54 @@ function runCommandIfExist($arg, $condition=null, $command) {
     
 }
 
+/**
+ * removing bootstrap and fontawesome before bundling
+ * 
+ * 
+ */
+function removeChunkAssets() {
+    let entryFile = fs.readFileSync(webpackConfig.entry,'UTF-8');
+    entryFile = entryFile.split("\n");
+    entryFile = entryFile.filter((line,i) => {
+        /* console.log(i)
+        if(!line.match('bootstrap') && line.match('@fortawesome/fontawesome-free/js/all.js') === null) {
+            return line;
+        } */
+        if(
+            line.match('bootstrap') || 
+            line.match('@fortawesome/fontawesome-free/js/all.js') || 
+            line.match("./scss/vendor.scss") ||
+            line.match("./scss/e-market.scss")
+            ) {
+            line = null;
+        }
+        return line
+    })
+    entryFile =entryFile.join("\n")
+    return entryFile
+}
+
 
 runCommandIfExist('asset','true',()=>{
     // removing directory if exists
-    fs.rmdirSync('./dist',{recursive:true})
-    // start executing command
-    exec('sass ./src/scss/e-market.scss ./dist/css/e-market.css', (e) => {
+    fs.rmdirSync('./dist',{recursive:true});
+    let originalFile = fs.readFileSync(webpackConfig.entry,'UTF-8');
+    let _file = removeChunkAssets();
+    fs.writeFileSync(webpackConfig.entry,_file);
+    // start bundling js files
+    exec('webpack', (e,s) => {
         if(e) {
             console.log(e)
         }
-        console.log('file ./src/scss/e-market.scss compiled successfully to ./dist/css/e-market.css')
+        console.log(s)
+        // start compile scss files
+        exec('sass ./src/scss/e-market.scss ./dist/css/e-market.css', (e) => {
+            if(e) {
+                console.log(e)
+            }
+            console.log('file ./src/scss/e-market.scss compiled successfully to ./dist/css/e-market.css')
+        })
+        fs.writeFileSync(webpackConfig.entry,originalFile);
     })
+    
 });
