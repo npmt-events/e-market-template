@@ -25,6 +25,7 @@
     "popper.js": "^1.16.1"
   },
   "scripts": {
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open",
+    "build" : "node src/scripts/build.js"
   }
 }
