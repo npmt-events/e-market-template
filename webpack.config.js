@@ -6,11 +6,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode : 'development',
-  entry :{
-    'e-market-app' : './src/index.js'
-  },
+  entry : './src/index.js',
   output:{
-    filename : 'js/[name].js',
+    filename : 'js/e-market-app.js',
     path : path.resolve(__dirname,'dist')
   },
   devServer: {
